@@ -12,21 +12,43 @@
 # --key-name nv_keypair --security-group-ids sg-0ad71420a0b2e2f78 --subnet-id subnet-08a8ac34932166a4b
 # --tags Key=Name,Value=Script
 
+INSTANCE="t2.micro"
+PRIVATE_IP=""
+DOMAIN_NAME="royalreddy.co.in"
+
 CREATE_EC2(){
     aws ec2 run-instances --image-id ami-0f3c7d07486cad139  --instance-type $2 \
 --key-name nv_keypair --security-group-ids sg-0ad71420a0b2e2f78 --subnet-id subnet-08a8ac34932166a4b \
 --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$1}]" --query 'Instances[0].PrivateIpAddress' --output text
 }
-INSTANCE=("mongodb" "mysql" "redis" "rabbiMQ" "web" "user" "catalogue" "payment" "dispatch" "shipping")
+INSTANCE=("mongodb")
 
 for i in "${INSTANCE[@]}"
 do
     echo "Name: $i"
     if [ $i == "mongodb" ] || [ $i == "shipping" ] || [ $i == "mysql" ];then 
-        CREATE_EC2 $i "t3.medium"
-    else
-        CREATE_EC2 $i "t2.micro"
+        INSTANCE="t3.medium"
     fi
+    PRIVATE_IP=$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139  --instance-type $2 \
+--key-name nv_keypair --security-group-ids sg-0ad71420a0b2e2f78 --subnet-id subnet-08a8ac34932166a4b \
+--tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$1}]" --query 'Instances[0].PrivateIpAddress' --output text
+)
+    aws route53 change-resource-record-sets \
+  --hosted-zone-id Z07439021R4NQF6C9ULT9 \
+  --change-batch "
+  {
+    "Comment": "Testing creating a record set"
+    ,"Changes": [{
+    "Action"              : "CREATE"
+    ,"ResourceRecordSet"  : {
+        "Name"              :  "$i.$DOMAIN_NAME"
+        ,"Type"             : "A"
+        ,"TTL"              : 1
+        ,"ResourceRecords"  : [{
+             "Value"         : "$PRIVATE_IP"
+        }]
+      }
+    }]
+  }
+  "
 done 
-
-# aws ec2 describe-instances --instance-ids <EC2_ID> --query 'Reservations[0].Instances[0].{"PrivateIP":PrivateIpAddress,"PublicIP":PublicIpAddress}'
