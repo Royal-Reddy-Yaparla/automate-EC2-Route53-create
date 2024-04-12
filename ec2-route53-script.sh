@@ -15,13 +15,14 @@
 INSTANCE="t2.micro"
 PRIVATE_IP=""
 DOMAIN_NAME="royalreddy.co.in"
+HOST_ID="Z07439021R4NQF6C9ULT9"
 
 CREATE_EC2(){
     aws ec2 run-instances --image-id ami-0f3c7d07486cad139  --instance-type $2 \
 --key-name nv_keypair --security-group-ids sg-0ad71420a0b2e2f78 --subnet-id subnet-08a8ac34932166a4b \
 --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$1}]" --query 'Instances[0].PrivateIpAddress' --output text
 }
-INSTANCE=("mongodb")
+INSTANCE=("mongodb" "mysql" "redis" "rabbiMQ" "web" "user" "catalogue" "payment" "dispatch" "shipping")
 
 for i in "${INSTANCE[@]}"
 do
@@ -35,7 +36,7 @@ do
 )
 echo "$i:$PRIVATE_IP"
 aws route53 change-resource-record-sets \
-  --hosted-zone-id Z07439021R4NQF6C9ULT9 \
+  --hosted-zone-id $HOST_ID \
   --change-batch '
   {
     "Comment": "Testing creating a record set"
