@@ -22,7 +22,7 @@ INSTANCE=("mongodb" "mysql" "redis" "rabbiMQ" "web" "user" "catalogue" "payment"
 for i in "${INSTANCE[@]}"
 do
     if [ $i == "mongodb" ] || [ $i == "shipping" ] || [ $i == "mysql" ];then 
-        CREATE_EC2 $i "t3.instances"
+        CREATE_EC2 $i "t3.medium"
     else
         CREATE_EC2 $i "t2.micro"
     fi
