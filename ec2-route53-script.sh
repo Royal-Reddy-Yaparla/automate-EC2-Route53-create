@@ -31,7 +31,7 @@ do
     fi
     PRIVATE_IP=$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139  --instance-type $INSTANCE \
 --key-name nv_keypair --security-group-ids sg-0ad71420a0b2e2f78 --subnet-id subnet-08a8ac34932166a4b \
---tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$1}]" --query 'Instances[0].PrivateIpAddress' --output text
+--tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]" --query 'Instances[0].PrivateIpAddress' --output text
 )
     aws route53 change-resource-record-sets \
   --hosted-zone-id Z07439021R4NQF6C9ULT9 \
