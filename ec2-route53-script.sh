@@ -33,22 +33,23 @@ do
 --key-name nv_keypair --security-group-ids sg-0ad71420a0b2e2f78 --subnet-id subnet-08a8ac34932166a4b \
 --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]" --query 'Instances[0].PrivateIpAddress' --output text
 )
-    aws route53 change-resource-record-sets \
+echo "$i:$PRIVATE_IP"
+aws route53 change-resource-record-sets \
   --hosted-zone-id Z07439021R4NQF6C9ULT9 \
-  --change-batch "
+  --change-batch '
   {
     "Comment": "Testing creating a record set"
     ,"Changes": [{
     "Action"              : "CREATE"
     ,"ResourceRecordSet"  : {
-        "Name"              :  "$i.$DOMAIN_NAME"
+        "Name"              :  "'$i'.'$DOMAIN_NAME'"
         ,"Type"             : "A"
         ,"TTL"              : 1
         ,"ResourceRecords"  : [{
-             "Value"         : "$PRIVATE_IP"
+            "Value"         : "'$PRIVATE_IP'"
         }]
       }
     }]
   }
-  "
+  '
 done 
