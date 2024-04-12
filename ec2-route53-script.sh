@@ -21,7 +21,7 @@ INSTANCE=("mongodb" "mysql" "redis" "rabbiMQ" "web" "user" "catalogue" "payment"
 
 for i in "${INSTANCE[@]}"
 do
-    echo "Name: $1"
+    echo "Name: $i"
     if [ $i == "mongodb" ] || [ $i == "shipping" ] || [ $i == "mysql" ];then 
         CREATE_EC2 $i "t3.medium"
     else
