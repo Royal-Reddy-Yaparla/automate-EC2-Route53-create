@@ -34,7 +34,7 @@ aws route53 change-resource-record-sets \
   {
     "Comment": "Testing creating a record set"
     ,"Changes": [{
-    "Action"              : "CREATE"
+    "Action"              : "UPSERT"
     ,"ResourceRecordSet"  : {
         "Name"              :  "'$i'.'$DOMAIN_NAME'"
         ,"Type"             : "A"
